@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Editable TodoList</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main>
+        <h1>Todo List</h1>
+        <input id="item" type="text"> <button class="myButton" id="add">Add</button>
+        <div class="output"></div>
+    </main>
+    
+
+    <script>
+        // 1. Declare the items to add to the list variable
+        let item = document.querySelector("#item");
+        let todoList = []
+        const addButton = document.querySelector("#add");
+        let output = document.querySelector(".output")
+
+        window.onload = build;
+
+        // 9. Adding items to the todolist array if it has value
+        addButton.addEventListener("click", () => {
+            if(item.value){
+                todoList.push(item.value);
+            }
+            // Rebuild the table
+            build();
+        })
+        
+        // 2.Build function to create a table to start adding our list when page loads
+        function build() {
+            // 0. Create a table dynamically with js once page loads
+            let createTable = document.createElement("table");
+            for(let i = 0; i < todoList.length;i++){  
+                // 8. Empting our previous list so that a new fresh list can be shown instead
+                output.innerHTML = "";
+                // 1. Creating a table row and since its an object, it's assigning an index to the i looper
+                let row = document.createElement("tr");
+                row.ind = i;
+
+                // 2.Generating a table data to contain our array list items and setting it
+                const tData = document.createElement("td");
+                tData.innerHTML = todoList[i];
+                //Appending each list generated to be a child of the row.
+                row.appendChild(tData);
+
+                // 3. This is generating the options to edit and delete text
+                let options = document.createElement("td");
+
+                // 4. Generating the various edit and delete buttons
+                let editItem = document.createElement("span");
+                editItem.innerText = "Edit";
+                options.appendChild(editItem);
+
+                
+
+                // 4. Generating the various edit and delete buttons
+                let deleteItem = document.createElement("span");
+                deleteItem.innerText = "Delete";
+
+                // 10 Adding the functionality to edit items
+                editItem.addEventListener("click",() => {
+                    // Code below is a simple test to show how row selects the enitre row in the table
+                    row.style.background = "yellow";
+                    
+                    // Getting the first elemet of the row child.So in this case the first td element will be chosen.
+                    // console.log(row.firstElementChild);
+                    let initialValue = row.firstElementChild;
+                    // Creating an input to be able to edit selected item
+                    let newInput = document.createElement("input");
+                    // Assigning the value inputted to be that of the initialValue
+                    newInput.value = initialValue.innerText;
+                    // Put focus on the clicked inut box
+                    newInput.focus();
+                    // Removing existing value
+                    initialValue.innerHTML= "";
+                    // Adding the generated input to initial value to replace it
+                    initialValue.appendChild(newInput);
+
+                    // Click event so that once the focus is not on it anymore,it replaces newvalue with initial value.
+                    newInput.addEventListener("blur", () => {
+                        initialValue.innerHTML = newInput.value;
+                        row.style.background = "white";
+                        // Now grab the index value and update it with the new value in the array
+                        todoList[i] = newInput.value;
+                    });
+
+                })
+                
+
+                // 7. Adding the functionality to delete items
+                deleteItem.addEventListener("click",() => {
+                    // What this does is use the splice array functio to delete the current clicked item at that particular index. U can
+                        // log the rest of the array and u will find out its no longer available i nthe list
+                    let deleted = todoList.splice(i,1);
+                    // After we rebuild our list by calling the build function
+                    build();
+                    
+                });
+
+
+                options.appendChild(deleteItem);
+
+                // 5.Adding the options as tabledata
+                row.appendChild(options)
+                //6. Finally adding the rows to the created table
+                createTable.appendChild(row);              
+            }
+            // console.log(createTable);
+            // 7.Showing it in the html by appneding the table to output
+            output.appendChild(createTable);
+        }
+
+        
+        
+        
+    </script>
+</body>
+</html>
